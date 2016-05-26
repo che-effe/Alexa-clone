@@ -1,0 +1,23 @@
+{
+  "name": "alexa-clone-cf",
+  "version": "1.0.0",
+  "description": "an Alexa clone",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "keywords": [
+    "alexa",
+    "iot"
+  ],
+  "author": "CF Grugan",
+  "license": "MIT"
+}
