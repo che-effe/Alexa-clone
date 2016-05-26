@@ -19,5 +19,14 @@
     "iot"
   ],
   "author": "CF Grugan",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.0.0-rc.5",
+    "edison-io": "^0.9.4",
+    "johnny-five": "^0.9.50",
+    "numstr": "^1.0.1",
+    "path": "^0.12.7",
+    "request": "^2.72.0",
+    "watson-developer-cloud": "^1.9.0"
+  }
 }
