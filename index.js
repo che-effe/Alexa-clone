@@ -1,37 +1,32 @@
-Skip to content
 
-
-Search…
-All gists
-GitHub
-New gist @che-effe
-  Star 0
-  Fork 0
-  @LosantGistsLosantGists/main.js
-Created a month ago
-Embed
-<script src="https://gist.github.com/LosantGists/a74ebc9037598856678537a63dbb0879.js"></script>
-  Download ZIP
- Code  Revisions 1
-how-to-build-an-amazon-echo-clone-with-ibm-watson-and-intel-edison Raw
-Raw  main.js
 /*jslint node:true, vars:true, bitwise:true, unparam:true */
 /*jshint unused:true */
 
 // load required modules
-var async = require('async');                     // helps control asynchronous flow
-var path = require('path');                       // utility for handling file paths
-var exec = require('child_process').exec;         // runs a command in a shell and buffers the output
-var spawn = require('child_process').spawn;       // launches a child process
-var request = require('request');                 // http request client
-var watson = require('watson-developer-cloud');   // IBM Watson services client
-var five = require('johnny-five');                // robotics programming framework
-var Edison = require('edison-io');                // edison IO library
-var numify = require('numstr').numify;            // english number utility
+// helps control asynchronous flow
+var async = require('async');
+// utility for handling file paths
+var path = require('path');
+// runs a command in a shell and buffers the output
+var exec = require('child_process').exec;
+// launches a child process
+var spawn = require('child_process').spawn;
+// http request client
+var request = require('request');
+// IBM Watson services client
+var watson = require('watson-developer-cloud');
+// robotics programming framework
+var five = require('johnny-five');
+// edison IO library
+var Edison = require('edison-io');
+// english number utility
+var numify = require('numstr').numify;
 
 // globals
-var led = null;                                   // reference to led object
-var working = false;                              // keeps track of if we are already working on a command
+// reference to led object
+var led = null;
+// keeps track of if we are already working on a command
+var working = false;
 
 // initialize watson text-to-speech service
 var textToSpeech = watson.text_to_speech({
@@ -58,7 +53,8 @@ function tts (text, cb) {
   // "fdsrc fd=0" says file to play will be on stdin
   // "wavparse" processes the file as audio/wav
   // "pulsesink" sends the audio to the default pulse audio sink device
-  var gst = exec('gst-launch-1.0 fdsrc fd=0 ! wavparse ! pulsesink', function (err) {
+  var gst = exec('gst-launch-1.0 fdsrc fd=0 ! wavparse ! pulsesink',
+    function (err) {
     if (err) { return cb(err); }
     cb();
   });
@@ -102,7 +98,8 @@ function playWav (file, cb) {
   // "wavparse" processes the file as audio/wav
   // "volume" sets the output volume, accepts value 0 - 1
   // "pulsesink" sends the audio to the default pulse audio sink device
-  exec('gst-launch-1.0 filesrc location=' + filePath + ' ! wavparse ! volume volume=0.25 ! pulsesink', function (err) {
+  exec('gst-launch-1.0 filesrc location=' + filePath +
+    ' ! wavparse ! volume volume=0.25 ! pulsesink', function (err) {
    return cb(err);
   });
 }
@@ -138,7 +135,7 @@ function main() {
 // handle any errors clear led and working flag
 function finish (err) {
   if (err) {
-    tts('Oops, something went wrong and I was unable to complete your request.');
+    tts('Oops, I was unable to complete your request.');
     console.log(err);
   }
   // stop blinking and turn off
@@ -160,7 +157,8 @@ function search (q, cb) {
   }
   // blick the led every 100 ms
   led.blink(100);
-  // run the query through numify for better support of calculations in duckduckgo
+  // run the query through numify for better support of calculations in
+  // duckduckgo
   q = numify(q);
   console.log('searching for: %s', q);
   var requestOptions = {
@@ -176,7 +174,8 @@ function search (q, cb) {
   request(requestOptions, function (err, res, body) {
     if (err) { return cb(err); }
     var result = JSON.parse(body);
-    var text = 'I\'m sorry, I was unable to find any information on ' + q;   // default response
+    // default response
+    var text = 'I\'m sorry, I was unable to find any information on ' + q;
     if (result.Answer) {
       text = result.Answer;
     } else if (result.Definition) {
