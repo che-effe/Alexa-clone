@@ -1,0 +1,72 @@
+{
+  "project": {
+    "projectSettingsVersion": "2.0.0",
+    "initialAutoPluginCount": 0,
+    "currentBuildConfiguration": "Android",
+    "projectFiles": {},
+    "projectDirectories": {}
+  },
+  "iot-tab": {
+    "fileStatus": {
+      "Alexa-clone.xdk": {
+        "previousModTime": 1464355176000,
+        "modified": 1464355176000,
+        "seen": true,
+        "name": "Alexa-clone.xdk"
+      },
+      "Alexa-clone.xdke": {
+        "previousModTime": 1464369996000,
+        "modified": 1464369996000,
+        "seen": true,
+        "name": "Alexa-clone.xdke"
+      },
+      "Makefile": {
+        "previousModTime": 1464298960000,
+        "modified": 1464298960000,
+        "seen": true,
+        "name": "Makefile"
+      },
+      "main.js": {
+        "previousModTime": 1464372242000,
+        "modified": 1464372242000,
+        "seen": true,
+        "name": "main.js"
+      },
+      "package.json": {
+        "previousModTime": 1464369838000,
+        "modified": 1464369838000,
+        "seen": true,
+        "name": "package.json"
+      },
+      "xdk/project-info.json": {
+        "previousModTime": 1464355176000,
+        "modified": 1464355176000,
+        "seen": true,
+        "name": "xdk/project-info.json"
+      },
+      "88877_DingLing.wav": {
+        "previousModTime": 1453663776000,
+        "modified": 1453663776000,
+        "seen": true,
+        "name": "88877_DingLing.wav"
+      }
+    },
+    "boardFileStatus": {
+      "Makefile": {
+        "previousModTime": 1464372378305
+      },
+      "main.js": {
+        "previousModTime": 1464372378305
+      },
+      "package.json": {
+        "previousModTime": 1464372378305
+      },
+      "xdk/project-info.json": {
+        "previousModTime": 1464372378305
+      },
+      "88877_DingLing.wav": {
+        "previousModTime": 1464372378305
+      }
+    }
+  }
+}
