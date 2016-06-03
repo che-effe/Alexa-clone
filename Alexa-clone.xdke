@@ -15,8 +15,8 @@
         "name": "Alexa-clone.xdk"
       },
       "Alexa-clone.xdke": {
-        "previousModTime": 1464722315000,
-        "modified": 1464722315000,
+        "previousModTime": 1464972778000,
+        "modified": 1464972778000,
         "seen": true,
         "name": "Alexa-clone.xdke"
       },
@@ -27,14 +27,14 @@
         "name": "Makefile"
       },
       "main.js": {
-        "previousModTime": 1464722356000,
-        "modified": 1464722356000,
+        "previousModTime": 1464973429000,
+        "modified": 1464973429000,
         "seen": true,
         "name": "main.js"
       },
       "package.json": {
-        "previousModTime": 1464704477000,
-        "modified": 1464704477000,
+        "previousModTime": 1464896016000,
+        "modified": 1464896016000,
         "seen": true,
         "name": "package.json"
       },
@@ -53,7 +53,7 @@
     },
     "boardFileStatus": {
       "main.js": {
-        "previousModTime": 1464722371741
+        "previousModTime": 1464973492925
       }
     }
   }

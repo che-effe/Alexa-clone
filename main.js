@@ -21,12 +21,22 @@ var five = require('johnny-five');
 var Edison = require('edison-io');
 // english number utility
 var numify = require('numstr').numify;
+//node-pixel pixel controller
+var pixel = require('node-pixel/lib/pixel')
 
 // globals
+// reference to the led strip
+var strip = null;
 // reference to led object
 var led = null;
 // keeps track of if we are already working on a command
 var working = false;
+
+var fps = 20; // how many frames per second do you want to try?
+
+var colors = ["red", "green", "blue", "yellow", "cyan", "magenta", "white"];
+var current_colors = [0,1,2,3];
+var current_pos = [0,1,2,3];
 
 // initialize watson text-to-speech service
 var textToSpeech = watson.text_to_speech({
@@ -54,6 +64,7 @@ function tts (text, cb) {
     text: "I am sorry, but I could not complete your request.",
     accept: 'audio/wav'
   };
+	requestLedPattern('J');
     
 textToSpeech.synthesize(paramsA);
 
@@ -108,6 +119,14 @@ function stt (cb) {
   }, duration);
 }
 
+function requestLedPattern(pattern){
+	var url = 'http://10.0.0.149/' + pattern;
+	
+	request.get(url)
+		.on('error', function(err) {
+    console.log(err)
+  })
+}
 // plays a local wav file
 function playWav (file, cb) {
   var filePath = path.resolve(__dirname, file);
@@ -117,7 +136,7 @@ function playWav (file, cb) {
   // "volume" sets the output volume, accepts value 0 - 1
   // "pulsesink" sends the audio to the default pulse audio sink device
     exec('gst-launch-1.0 filesrc location=' + filePath +
-    ' ! wavparse ! volume volume=0.10 ! pulsesink', function (err) {
+    ' ! wavparse ! volume volume=0.08 ! pulsesink', function (err) {
         if(cb){
             return cb(err);
         }
@@ -135,8 +154,9 @@ var board = new five.Board({
 
 // when the board is ready, listen for a button press
 board.on('ready', function() {
-    playWav('88877_DingLing.wav');
-  var button = new five.Button(32);
+	requestLedPattern('A');
+  tts('Ready');
+  var button = new five.Button("J19-5");
   led = new five.Led(33);
   led.off();
   button.on('press', main);
@@ -147,6 +167,7 @@ board.on('ready', function() {
 function main() {
   if (working) { return; }
   working = true;
+	requestLedPattern('E');
   async.waterfall([
     async.apply(playWav, '88877_DingLing.wav'),
     listen,
@@ -158,7 +179,9 @@ function main() {
 // handle any errors clear led and working flag
 function finish (err) {
   if (err) {
+		finish
     tts('Nope.');
+		requestLedPattern('J');
     console.log(err);
   }
   // stop blinking and turn off
@@ -183,6 +206,8 @@ function search (q, cb) {
   }
   // blick the led every 100 ms
   led.blink(100);
+	requestLedPattern('J');
+
   // run the query through numify for better support of calculations in
   // duckduckgo
   q = numify(q);
@@ -221,6 +246,7 @@ function speak (text, cb) {
   // stop blinking and turn off
   led.stop().off();
   if (!text) {
+
       text="I am sorry, but I could not complete the request";
   }
   tts(text, cb);
