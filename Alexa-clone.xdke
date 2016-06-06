@@ -15,8 +15,8 @@
         "name": "Alexa-clone.xdk"
       },
       "Alexa-clone.xdke": {
-        "previousModTime": 1464972778000,
-        "modified": 1464972778000,
+        "previousModTime": 1465241328000,
+        "modified": 1465241328000,
         "seen": true,
         "name": "Alexa-clone.xdke"
       },
@@ -27,8 +27,8 @@
         "name": "Makefile"
       },
       "main.js": {
-        "previousModTime": 1464973429000,
-        "modified": 1464973429000,
+        "previousModTime": 1465241315000,
+        "modified": 1465241315000,
         "seen": true,
         "name": "main.js"
       },
@@ -51,10 +51,6 @@
         "name": "88877_DingLing.wav"
       }
     },
-    "boardFileStatus": {
-      "main.js": {
-        "previousModTime": 1464973492925
-      }
-    }
+    "boardFileStatus": {}
   }
 }

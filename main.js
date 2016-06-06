@@ -31,13 +31,13 @@ var strip = null;
 var led = null;
 // keeps track of if we are already working on a command
 var working = false;
-
+var privacyOn = false;
 var fps = 20; // how many frames per second do you want to try?
 
 var colors = ["red", "green", "blue", "yellow", "cyan", "magenta", "white"];
 var current_colors = [0,1,2,3];
 var current_pos = [0,1,2,3];
-
+var username;
 // initialize watson text-to-speech service
 var textToSpeech = watson.text_to_speech({
   username: 'c3f77887-ce72-4e6f-898e-5ec84586311f',
@@ -63,9 +63,7 @@ function tts (text, cb) {
     var paramsA = {
     text: "I am sorry, but I could not complete your request.",
     accept: 'audio/wav'
-  };
-	requestLedPattern('J');
-    
+  };    
 textToSpeech.synthesize(paramsA);
 
   // create gtstreamer child process to play audio
@@ -89,8 +87,7 @@ function emptyCallback() {
 }
 
 // listens for audio then returns text
-function stt (cb) {
-  var duration = 5000;
+function stt (cb, duration) {
   console.log('listening for %s ms ...', duration);
   // create an arecord child process to record audio
   var arecord = spawn('arecord', ['-D', 'hw:2,0', '-f', 'S16_LE', '-r44100']);
@@ -109,6 +106,27 @@ function stt (cb) {
           text = res.results[0].alternatives[0].transcript;
         } catch (e) { }
         console.log('you said: "%s"', text);
+				if (text.includes('wake up')){
+					main();
+					return;
+				}
+				if (text.includes('my name is')){
+					username = text.substring(11, 40);
+					console.log('your name is '+ username);
+					speak('Hello' + username + ' It\'s nice to meet you');
+					finish();
+					return;
+				} else if(text.includes('what is my name')) {
+						if (username) {
+							speak('You haven\'t told me your name yet.');
+							finish();
+							return;
+						} else {
+							speak('Well, you told me that your name is' + username);
+							finish();
+							return;
+						}
+				}
         cb(null, text.trim());
       }
    
@@ -154,20 +172,32 @@ var board = new five.Board({
 
 // when the board is ready, listen for a button press
 board.on('ready', function() {
-	requestLedPattern('A');
+	requestLedPattern('powerOn');
   tts('Ready');
   var button = new five.Button("J19-5");
   led = new five.Led(33);
   led.off();
-  button.on('press', main);
+  //button.on('press', main);
+	alwaysListening();
 });
 
 
+function alwaysListening() {
+	 async.waterfall([
+    listenForWake,
+  ], clearBackgroundListen);
+	setTimeout(function () {
+		if (privacyOn || working){
+			return;
+		}
+		alwaysListening();
+  }, 2000);
+}
 // main function
 function main() {
   if (working) { return; }
   working = true;
-	requestLedPattern('E');
+	requestLedPattern('wakeup');
   async.waterfall([
     async.apply(playWav, '88877_DingLing.wav'),
     listen,
@@ -176,37 +206,47 @@ function main() {
   ], finish);
 }
 
+function clearBackgroundListen() {
+	  working = false;
+}
 // handle any errors clear led and working flag
 function finish (err) {
   if (err) {
 		finish
     tts('Nope.');
-		requestLedPattern('J');
+		requestLedPattern('error');
     console.log(err);
   }
   // stop blinking and turn off
   led.stop().off();
   working = false;
+	alwaysListening();
 }
 
+// listen for the wake word or phrase
+function listenForWake(cb) {
+	stt(cb, 2000);
+}
 // listen for the audio input
 function listen (cb) {
   // turn on the led
   led.on();
-  stt(cb);
+  stt(cb, 5000);
+	requestLedPattern('listen');
 }
 
 // perform a search using the duckduckgo instant answer api
 function search (q, cb) {
   if (!q) {
       if(cb) {
+				requestLedPattern('listenError');
           return cb(null, 'I\'m sorry I didn\'t hear you.');
       }
 
   }
   // blick the led every 100 ms
   led.blink(100);
-	requestLedPattern('J');
+	requestLedPattern('processing');
 
   // run the query through numify for better support of calculations in
   // duckduckgo
