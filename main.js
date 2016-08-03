@@ -177,11 +177,7 @@ function main() {
     main();
   }, 8000);
   working = true;
-
-  async.waterfall([
-    listen,
-    speak
-  ], finish);
+  listen(finish);
 }
 
 function clearBackgroundListen() {
