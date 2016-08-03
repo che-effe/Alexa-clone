@@ -97,6 +97,8 @@ function stt(cb, duration) {
         } catch (e) { }
         console.log('you said: "%s"', text);
         if (!text.includes('xfinity')) {
+          console.log(' You said', text)
+          finish();
           return;
         }
         if (text.includes('my name is')) {
@@ -170,13 +172,18 @@ board.on('ready', function() {
 
 // main function
 function main() {
+  working = true;
   setTimeout(function() {
     if (privacyOn || working) {
       return;
     }
     main();
-  }, 8025);
-  listen(finish);
+  }, 8000);
+  async.waterfall([
+    listen,
+    search,
+    speak
+  ], finish);
 }
 
 function clearBackgroundListen() {
