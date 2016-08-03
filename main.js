@@ -175,8 +175,7 @@ function main() {
       return;
     }
     main();
-  }, 8000);
-  working = true;
+  }, 8025);
   listen(finish);
 }
 
