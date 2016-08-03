@@ -185,9 +185,7 @@ function main() {
   working = true;
   requestLedPattern('wakeup');
   async.waterfall([
-    async.apply(playWav, 'XR-18-Listening.wav'),
     listen,
-    search,
     speak
   ], finish);
 }
