@@ -246,6 +246,7 @@ function search (q, cb) {
   }
   // blick the led every 100 ms
   led.blink(100);
+  playWav('XR-18-FinishListen.wav')
 	requestLedPattern('processing');
 
   // run the query through numify for better support of calculations in
