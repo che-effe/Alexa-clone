@@ -96,9 +96,8 @@ function stt(cb, duration) {
           text = res.results[0].alternatives[0].transcript;
         } catch (e) { }
         console.log('you said: "%s"', text);
-        if (text.includes('xfinity')) {
-          text = text.replace('xfinity', '');
-          search(text, speak);
+        if (!text.includes('xfinity')) {
+          return;
         }
         if (text.includes('my name is')) {
           username = text.substring(11, 40);
@@ -117,6 +116,7 @@ function stt(cb, duration) {
             return;
           }
         }
+        text = text.replace('xfinity', '');
         cb(null, text.trim());
       }
 
@@ -165,24 +165,18 @@ board.on('ready', function() {
   led = new five.Led(33);
   led.off();
   //button.on('press', main);
-  alwaysListening();
+  main();
 });
 
-function alwaysListening() {
-  async.waterfall([
-    main,
-  ], clearBackgroundListen);
+// main function
+function main() {
+
   setTimeout(function() {
     if (privacyOn || working) {
       return;
     }
-    alwaysListening();
+    main();
   }, 8000);
-}
-// main function
-function main() {
-  working = true;
-  requestLedPattern('wakeup');
   async.waterfall([
     listen,
     speak
