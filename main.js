@@ -181,7 +181,6 @@ function alwaysListening() {
 }
 // main function
 function main() {
-  if (working) { return; }
   working = true;
   requestLedPattern('wakeup');
   async.waterfall([
