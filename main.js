@@ -170,13 +170,14 @@ board.on('ready', function() {
 
 // main function
 function main() {
-
   setTimeout(function() {
     if (privacyOn || working) {
       return;
     }
     main();
   }, 8000);
+  working = true;
+
   async.waterfall([
     listen,
     speak
@@ -196,7 +197,7 @@ function finish(err) {
   // stop blinking and turn off
   led.stop().off();
   working = false;
-  alwaysListening();
+  main();
 }
 
 // listen for the audio input
