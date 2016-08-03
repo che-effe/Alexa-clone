@@ -22,21 +22,15 @@ var Edison = require('edison-io');
 // english number utility
 var numify = require('numstr').numify;
 //node-pixel pixel controller
-var pixel = require('node-pixel/lib/pixel')
 
 // globals
 // reference to the led strip
-var strip = null;
 // reference to led object
 var led = null;
 // keeps track of if we are already working on a command
 var working = false;
 var privacyOn = false;
-var fps = 20; // how many frames per second do you want to try?
 
-var colors = ["red", "green", "blue", "yellow", "cyan", "magenta", "white"];
-var current_colors = [0,1,2,3];
-var current_pos = [0,1,2,3];
 var username;
 // initialize watson text-to-speech service
 var textToSpeech = watson.text_to_speech({
@@ -53,41 +47,37 @@ var speechToText = watson.speech_to_text({
 });
 
 // accepts a string and reads it aloud
-function tts (text, cb) {
+function tts(text, cb) {
   // build tts parameters
   var params = {
     text: text,
     accept: 'audio/wav'
   };
 
-    var paramsA = {
-    text: "I am sorry, but I could not complete your request.",
+  var paramsA = {
+    text: 'I am sorry, but I could not complete your request.',
     accept: 'audio/wav'
   };
-textToSpeech.synthesize(paramsA);
+  textToSpeech.synthesize(paramsA);
 
   // create gtstreamer child process to play audio
-  // "fdsrc fd=0" says file to play will be on stdin
-  // "wavparse" processes the file as audio/wav
-  // "pulsesink" sends the audio to the default pulse audio sink device
+  // 'fdsrc fd=0' says file to play will be on stdin
+  // 'wavparse' processes the file as audio/wav
+  // 'pulsesink' sends the audio to the default pulse audio sink device
   var gst = exec('gst-launch-1.0 fdsrc fd=0 ! wavparse ! pulsesink',
-    function (err) {
-      if (cb){
+    function(err) {
+      if (cb) {
         if (err) { return cb(err); }
         cb();
       }
 
-  });
+    });
   // use watson and pipe the text-to-speech results directly to gst
   textToSpeech.synthesize(params).pipe(gst.stdin);
 }
 
-function emptyCallback() {
-    return;
-}
-
 // listens for audio then returns text
-function stt (cb, duration) {
+function stt(cb, duration) {
   console.log('listening for %s ms ...', duration);
   // create an arecord child process to record audio
   var arecord = spawn('arecord', ['-D', 'hw:2,0', '-f', 'S16_LE', '-r44100']);
@@ -98,71 +88,68 @@ function stt (cb, duration) {
     continuous: true    // listen for audio the full 5 seconds
   };
   // use watson to get answer text
-  speechToText.recognize(params, function (err, res) {
-      if(cb){
+  speechToText.recognize(params, function(err, res) {
+      if (cb) {
         if (err) { return cb(err); }
         var text = '';
         try {
           text = res.results[0].alternatives[0].transcript;
         } catch (e) { }
         console.log('you said: "%s"', text);
-				if (text.includes('wake up')){
-					main();
-					return;
-				}
-				if (text.includes('my name is')){
-					username = text.substring(11, 40);
-					console.log('your name is '+ username);
-					speak('Hello' + username + ' It\'s nice to meet you');
-					finish();
-					return;
-				} else if(text.includes('what is my name')) {
-						if (username) {
-							speak('You haven\'t told me your name yet.');
-							finish();
-							return;
-						} else {
-							speak('Well, you told me that your name is' + username);
-							finish();
-							return;
-						}
-				}
+        if (text.includes('xfinity')) {
+          text = text.replace('xfinity', '');
+          search(text, function() { return;});
+        }
+        if (text.includes('my name is')) {
+          username = text.substring(11, 40);
+          console.log('your name is ' + username);
+          speak('Hello' + username + ' It\'s nice to meet you');
+          finish();
+          return;
+        } else if (text.includes('what is my name')) {
+          if (username) {
+            speak('You haven\'t told me your name yet.');
+            finish();
+            return;
+          } else {
+            speak('Well, you told me that your name is' + username);
+            finish();
+            return;
+          }
+        }
         cb(null, text.trim());
       }
 
-  });
+    });
   // record for duration then kill the child process
-  setTimeout(function () {
+  setTimeout(function() {
     arecord.kill('SIGINT');
   }, duration);
 }
 
-function requestLedPattern(pattern){
-	var url = 'http://10.0.0.149/' + pattern;
+function requestLedPattern(pattern) {
+  var url = 'http://10.0.0.149/' + pattern;
 
-	request.get(url)
-		.on('error', function(err) {
-    console.log(err)
-  })
+  request.get(url)
+  .on('error', function(err) {
+    console.log(err);
+  });
 }
 // plays a local wav file
-function playWav (file, cb) {
+function playWav(file, cb) {
   var filePath = path.resolve(__dirname, file);
   // create gtstreamer child process to play audio
-  // "filesrc location=" says use a file at the location as the src
-  // "wavparse" processes the file as audio/wav
-  // "volume" sets the output volume, accepts value 0 - 1
-  // "pulsesink" sends the audio to the default pulse audio sink device
-    exec('gst-launch-1.0 filesrc location=' + filePath +
-    ' ! wavparse ! volume volume=0.08 ! pulsesink', function (err) {
-        if(cb){
-            return cb(err);
+  // 'filesrc location=' says use a file at the location as the src
+  // 'wavparse' processes the file as audio/wav
+  // 'volume' sets the output volume, accepts value 0 - 1
+  // 'pulsesink' sends the audio to the default pulse audio sink device
+  exec('gst-launch-1.0 filesrc location=' + filePath +
+    ' ! wavparse ! volume volume=0.08 ! pulsesink', function(err) {
+        if (cb) {
+          return cb(err);
         }
-    });
-
-
+      });
 }
-
 
 // initialize edison board
 var board = new five.Board({
@@ -172,32 +159,31 @@ var board = new five.Board({
 
 // when the board is ready, listen for a button press
 board.on('ready', function() {
-	requestLedPattern('powerOn');
+  requestLedPattern('powerOn');
   tts('Ready');
-  var button = new five.Button("J19-5");
+  // var button = new five.Button('J19-5');
   led = new five.Led(33);
   led.off();
   //button.on('press', main);
-	alwaysListening();
+  alwaysListening();
 });
 
-
 function alwaysListening() {
-	 async.waterfall([
-    listenForWake,
+  async.waterfall([
+    main,
   ], clearBackgroundListen);
-	setTimeout(function () {
-		if (privacyOn || working){
-			return;
-		}
-		alwaysListening();
+  setTimeout(function() {
+    if (privacyOn || working) {
+      return;
+    }
+    alwaysListening();
   }, 8000);
 }
 // main function
 function main() {
   if (working) { return; }
   working = true;
-	requestLedPattern('wakeup');
+  requestLedPattern('wakeup');
   async.waterfall([
     async.apply(playWav, 'XR-18-Listening.wav'),
     listen,
@@ -207,47 +193,42 @@ function main() {
 }
 
 function clearBackgroundListen() {
-	  working = false;
+  working = false;
 }
 // handle any errors clear led and working flag
-function finish (err) {
+function finish(err) {
   if (err) {
-		finish
     tts('Nope.');
-		requestLedPattern('error');
+    requestLedPattern('error');
     console.log(err);
   }
   // stop blinking and turn off
   led.stop().off();
   working = false;
-	alwaysListening();
+  alwaysListening();
 }
 
-// listen for the wake word or phrase
-function listenForWake(cb) {
-	stt(cb, 8000);
-}
 // listen for the audio input
-function listen (cb) {
+function listen(cb) {
   // turn on the led
   led.on();
   stt(cb, 8000);
-	requestLedPattern('listen');
+  requestLedPattern('listen');
 }
 
 // perform a search using the duckduckgo instant answer api
-function search (q, cb) {
+function search(q, cb) {
   if (!q) {
-      if(cb) {
-				requestLedPattern('listenError');
-          return cb(null, 'I\'m sorry I didn\'t hear you.');
-      }
+    if (cb) {
+      requestLedPattern('listenError');
+      return cb(null, 'I\'m sorry I didn\'t hear you.');
+    }
 
   }
   // blick the led every 100 ms
   led.blink(100);
-  playWav('XR-18-FinishListen.wav')
-	requestLedPattern('processing');
+  playWav('XR-18-FinishListen.wav');
+  requestLedPattern('processing');
 
   // run the query through numify for better support of calculations in
   // duckduckgo
@@ -263,8 +244,8 @@ function search (q, cb) {
       skip_disambig: 1
     }
   };
-  request(requestOptions, function (err, res, body) {
-      if(cb){
+  request(requestOptions, function(err, res, body) {
+      if (cb) {
         if (err) { return cb(err); }
         var result = JSON.parse(body);
         // default response
@@ -278,17 +259,16 @@ function search (q, cb) {
         }
         cb(null, text);
       }
-
-  });
+    });
 }
 
 // read the search results
-function speak (text, cb) {
+function speak(text, cb) {
   // stop blinking and turn off
   led.stop().off();
   if (!text) {
 
-      text="I am sorry, but I could not complete the request";
+    text = 'I am sorry, but I could not complete the request';
   }
   tts(text, cb);
 }
