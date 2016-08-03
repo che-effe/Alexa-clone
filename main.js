@@ -98,7 +98,7 @@ function stt(cb, duration) {
         console.log('you said: "%s"', text);
         if (text.includes('xfinity')) {
           text = text.replace('xfinity', '');
-          search(text, function() { return;});
+          search(text, speak);
         }
         if (text.includes('my name is')) {
           username = text.substring(11, 40);
