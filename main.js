@@ -191,7 +191,7 @@ function alwaysListening() {
 			return;
 		}
 		alwaysListening();
-  }, 2000);
+  }, 8000);
 }
 // main function
 function main() {
@@ -225,13 +225,13 @@ function finish (err) {
 
 // listen for the wake word or phrase
 function listenForWake(cb) {
-	stt(cb, 2000);
+	stt(cb, 8000);
 }
 // listen for the audio input
 function listen (cb) {
   // turn on the led
   led.on();
-  stt(cb, 5000);
+  stt(cb, 8000);
 	requestLedPattern('listen');
 }
 
