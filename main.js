@@ -59,11 +59,11 @@ function tts (text, cb) {
     text: text,
     accept: 'audio/wav'
   };
-    
+
     var paramsA = {
     text: "I am sorry, but I could not complete your request.",
     accept: 'audio/wav'
-  };    
+  };
 textToSpeech.synthesize(paramsA);
 
   // create gtstreamer child process to play audio
@@ -73,7 +73,7 @@ textToSpeech.synthesize(paramsA);
   var gst = exec('gst-launch-1.0 fdsrc fd=0 ! wavparse ! pulsesink',
     function (err) {
       if (cb){
-        if (err) { return cb(err); }    
+        if (err) { return cb(err); }
         cb();
       }
 
@@ -129,7 +129,7 @@ function stt (cb, duration) {
 				}
         cb(null, text.trim());
       }
-   
+
   });
   // record for duration then kill the child process
   setTimeout(function () {
@@ -139,7 +139,7 @@ function stt (cb, duration) {
 
 function requestLedPattern(pattern){
 	var url = 'http://10.0.0.149/' + pattern;
-	
+
 	request.get(url)
 		.on('error', function(err) {
     console.log(err)
@@ -159,8 +159,8 @@ function playWav (file, cb) {
             return cb(err);
         }
     });
-    
-  
+
+
 }
 
 
@@ -199,7 +199,7 @@ function main() {
   working = true;
 	requestLedPattern('wakeup');
   async.waterfall([
-    async.apply(playWav, '88877_DingLing.wav'),
+    async.apply(playWav, 'XR-18-Listening.wav'),
     listen,
     search,
     speak
@@ -277,7 +277,7 @@ function search (q, cb) {
         }
         cb(null, text);
       }
-    
+
   });
 }
 
