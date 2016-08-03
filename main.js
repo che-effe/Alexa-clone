@@ -96,7 +96,7 @@ function stt(cb, duration) {
           text = res.results[0].alternatives[0].transcript;
         } catch (e) { }
         console.log('you said: "%s"', text);
-        if (!text.includes('xfinity')) {
+        if (!text.includes('Jarvis')) {
           console.log(' You said', text)
           finish();
           return;
@@ -118,7 +118,7 @@ function stt(cb, duration) {
             return;
           }
         }
-        text = text.replace('xfinity', '');
+        text = text.replace('Jarvis', '');
         cb(null, text.trim());
       }
 
