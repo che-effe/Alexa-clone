@@ -101,23 +101,6 @@ function stt(cb, duration) {
           finish();
           return;
         }
-        if (text.includes('my name is')) {
-          username = text.substring(11, 40);
-          console.log('your name is ' + username);
-          speak('Hello' + username + ' It\'s nice to meet you');
-          finish();
-          return;
-        } else if (text.includes('what is my name')) {
-          if (username) {
-            speak('You haven\'t told me your name yet.');
-            finish();
-            return;
-          } else {
-            speak('Well, you told me that your name is' + username);
-            finish();
-            return;
-          }
-        }
         text = text.replace('Jarvis', '');
         cb(null, text.trim());
       }
@@ -214,15 +197,12 @@ function listen(cb) {
 function search(q, cb) {
   if (!q) {
     if (cb) {
-      requestLedPattern('listenError');
       return cb(null, 'I\'m sorry I didn\'t hear you.');
     }
 
   }
   // blick the led every 100 ms
   led.blink(100);
-  playWav('XR-18-FinishListen.wav');
-  requestLedPattern('processing');
 
   // run the query through numify for better support of calculations in
   // duckduckgo
