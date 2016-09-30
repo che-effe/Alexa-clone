@@ -147,7 +147,7 @@ function main() {
       return;
     }
     main();
-  }, 2000);
+  }, 8000);
   async.waterfall([
     listen,
     search,
@@ -172,7 +172,7 @@ function finish(err) {
 // listen for the audio input
 function listen(cb) {
   // turn on the led
-  stt(cb, 2000);
+  stt(cb, 8000);
 }
 
 // perform a search using the duckduckgo instant answer api
