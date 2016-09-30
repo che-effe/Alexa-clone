@@ -24,9 +24,6 @@ var numify = require('numstr').numify;
 //node-pixel pixel controller
 
 // globals
-// reference to the led strip
-// reference to led object
-var led = null;
 // keeps track of if we are already working on a command
 var working = false;
 var privacyOn = false;
@@ -112,14 +109,6 @@ function stt(cb, duration) {
   }, duration);
 }
 
-function requestLedPattern(pattern) {
-  var url = 'http://10.0.0.149/' + pattern;
-
-  request.get(url)
-  .on('error', function(err) {
-    console.log(err);
-  });
-}
 // plays a local wav file
 function playWav(file, cb) {
   var filePath = path.resolve(__dirname, file);
@@ -144,11 +133,8 @@ var board = new five.Board({
 
 // when the board is ready, listen for a button press
 board.on('ready', function() {
-  requestLedPattern('powerOn');
   tts('Ready');
   // var button = new five.Button('J19-5');
-  led = new five.Led(33);
-  led.off();
   //button.on('press', main);
   main();
 });
@@ -161,7 +147,7 @@ function main() {
       return;
     }
     main();
-  }, 8000);
+  }, 2000);
   async.waterfall([
     listen,
     search,
@@ -176,11 +162,9 @@ function clearBackgroundListen() {
 function finish(err) {
   if (err) {
     tts('Nope.');
-    requestLedPattern('error');
     console.log(err);
   }
   // stop blinking and turn off
-  led.stop().off();
   working = false;
   main();
 }
@@ -188,9 +172,7 @@ function finish(err) {
 // listen for the audio input
 function listen(cb) {
   // turn on the led
-  led.on();
-  stt(cb, 8000);
-  requestLedPattern('listen');
+  stt(cb, 2000);
 }
 
 // perform a search using the duckduckgo instant answer api
@@ -201,8 +183,6 @@ function search(q, cb) {
     }
 
   }
-  // blick the led every 100 ms
-  led.blink(100);
 
   // run the query through numify for better support of calculations in
   // duckduckgo
@@ -239,7 +219,6 @@ function search(q, cb) {
 // read the search results
 function speak(text, cb) {
   // stop blinking and turn off
-  led.stop().off();
   if (!text) {
 
     text = 'I am sorry, but I could not complete the request';
