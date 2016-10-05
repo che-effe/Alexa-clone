@@ -33,16 +33,19 @@ var privacyOn = false;
 
 var username;
 // initialize watson text-to-speech service
+// Get credentials from Bluemix to integrate Watson
+
 var textToSpeech = watson.text_to_speech({
-  username: 'c3f77887-ce72-4e6f-898e-5ec84586311f',
-  password: 'Zjehoy3O86U6',
+  username: '',
+  password: '',
   version: 'v1'
 });
 
 // initialize watson speech-to-text service
+// Get credentials from Bluemix to integrate Watson
 var speechToText = watson.speech_to_text({
-  username: 'f41a73ac-5a2d-4d8d-afc9-913ae23edaf4',
-  password: 'YIBaFt8W8pR2',
+  username: '',
+  password: '',
   version: 'v1'
 });
 
@@ -96,7 +99,7 @@ function stt(cb, duration) {
           text = res.results[0].alternatives[0].transcript;
         } catch (e) { }
         console.log('you said: "%s"', text);
-        if (!text.includes('xfinity')) {
+        if (!text.includes('Jarvis')) {
           return;
         }
         if (text.includes('my name is')) {
@@ -116,7 +119,7 @@ function stt(cb, duration) {
             return;
           }
         }
-        text = text.replace('xfinity', '');
+        text = text.replace('Jarvis', '');
         cb(null, text.trim());
       }
 
@@ -218,7 +221,6 @@ function search(q, cb) {
   }
   // blick the led every 100 ms
   led.blink(100);
-  playWav('XR-18-FinishListen.wav');
   requestLedPattern('processing');
 
   // run the query through numify for better support of calculations in
